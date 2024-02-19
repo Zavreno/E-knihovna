@@ -1,0 +1,69 @@
+{% extends "polls/base.html" %}
+{% block content %}
+    <section class="d-flex">
+        <article class="sidebar">
+            <ul class="nav flex-column">
+                <h4>Kategorie</h4>
+              {% for genre_value, genre_label in genre_choices %}
+                <li class="nav-item border-bottom">
+                    <a class="nav-link" href="{% url 'book-category' genre_label %}">{{ genre_label }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+        </article>
+        <article class="container">
+            <header class="container-header d-flex justify-content-between">
+                <h2>{{ view.kwargs.genre }}</h2>
+                <form id="select-form" method="GET" action="{{ request.path }}" class="d-flex align-items-center mb-2">
+                    {% csrf_token %}
+                        <label class="text-nowrap" for="sort-by">Seřadit dle:</label>
+                        <select id="sort-by" class="form-select ms-3" name="sort_by">
+                            <option value="up_date" {% if request.GET.sort_by == "up_date" %}selected{% endif %}>Datum přidání</option>
+                            <option value="title" {% if request.GET.sort_by == "title" %}selected{% endif %}>Jméno knihy</option>
+                            <option value="author" {% if request.GET.sort_by == "author" %}selected{% endif %}>Jméno autora</option>
+                            <option value="price" {% if request.GET.sort_by == "price" %}selected{% endif %}>Cena</option>
+                            <option value="pub_date" {% if request.GET.sort_by == "pub_date" %}selected{% endif %}>Datum vydání</option>
+                        </select>
+                </form>
+            </header>
+            <ul>
+                {% for book in book_list %}
+                    <li class="book-li d-flex flex-column align-items-center">
+                        <a href="{% url 'book-detail' book.id %}"><img class="menu-book" src="{{ book.image.url }}"></a>
+                        <h5 class="pt-2"><a href="{% url 'book-detail' book.id %}" title="{{ book.title }}">{{ book.title|truncatechars:20 }}</a></h5>
+                        <div class="mt-auto">
+                            <a class="author-a" href="{% url 'author-books' book.author %}">{{ book.author }}</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="d-flex justify-content-end border-top pt-3">
+                {% if is_paginated %}
+                    {% if page_obj.has_previous %}
+                        <a class="btn btn-outline-dark mb-3" href="?page={{ page_obj.previous_page_number }}">Předchozí</a>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <a class="btn btn-dark mb-3" href="?page={{ num }}">{{ num }}</a>
+                        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                            <a class="btn btn-outline-dark mb-3" href="?page={{ num }}">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a class="btn btn-outline-dark mb-3" href="?page={{ page_obj.next_page_number}}">Další</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </article>
+    </section>
+
+<script>
+    const sortBySelect = document.getElementById('sort-by');
+    sortBySelect.addEventListener('change', function() {
+        const form = document.getElementById('select-form');
+        form.submit();
+    });
+</script>
+{% endblock %}

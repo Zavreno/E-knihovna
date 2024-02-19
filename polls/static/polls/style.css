@@ -1,0 +1,129 @@
+body {
+    font-family: sans-serif;
+}
+
+section .container {
+    background: #ffffff;
+    padding: 10px 20px;
+    font-family: sans-serif;
+    margin-left: 201px;
+}
+
+.container-header {
+    border-bottom: 1px solid #f5f6f7;
+    margin: 0 10px 20px 10px;
+}
+
+.nav-header {
+    top: 0;
+    position: sticky;
+}
+
+.container ul {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: start; /* Zarovnání na okraji a mezi sloupci */
+            list-style-type: none;
+            padding: 0;
+        }
+
+.containerr {
+    background: #ffffff;
+    padding: 10px 20px;
+    font-family: sans-serif;
+    margin-left: 201px;
+}
+
+.containerr ul {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: start; /* Zarovnání na okraji a mezi sloupci */
+            list-style-type: none;
+            padding: 0;
+        }
+
+.book-li {
+            width: calc(16.16% - 10px); /* Šířka jednoho sloupce, odečítáme 10px pro mezery mezi sloupci */
+            margin: 5px; /* Mezery mezi jednotlivými předměty */
+            padding: 10px 0px 10px 0px;
+            text-align: center;
+            box-sizing: border-box; /* Zahrnutí paddingu ve výpočtu šířky */
+            height: 270px;
+            width: 130px;
+        }
+
+@media (max-width: 600px) {
+    .book-li {
+        width: calc(50% - 10px); /* Při menším zařízení dvě položky na řádku */
+    }
+}
+
+@media (max-width: 400px) {
+    .book-li {
+        width: 100%; /* Při velmi malém zařízení jedna položka na řádku */
+    }
+}
+
+.container li a {
+    text-decoration: none;
+    color: #0172c2;
+}
+
+.container li a:hover{
+    text-decoration: underline;
+}
+
+.container .author-a {
+    color: #816031;
+}
+
+.container h5 {
+    font-size: 1.1em;
+}
+
+.menu-book {
+    height: 160px;
+    width: 106px;
+}
+
+.detail-a a {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+section .sidebar {
+    width: 200px;
+    position: fixed;
+    z-index: 1;
+    background: #ffffff;
+    padding: 20px;
+}
+
+.sidebar h4 {
+    padding: 10px;
+    border-bottom: 1px solid #212529;
+}
+
+.similar-book-a {
+    text-decoration: none;
+    color: #0172c2;
+}
+
+.similar-book-a:hover {
+    text-decoration: underline;
+}
+
+.book-detail-img {
+    height: 300px;
+    width: 196px;
+}
+
+.similar-book-detail-img img {
+    height: 300px;
+    width: 196px;
+}
+
+.book-detail-img img {
+    max-height: 300px;
+    max-width: 196px;
+}

@@ -1,0 +1,105 @@
+{% extends "polls/base.html" %}
+{% block content %}
+    <article class="containerr">
+        <header class="container-header">
+            <h2>Detaily</h2>
+        </header>
+        <section class="d-flex">
+            <div class="book-detail-img">
+                <img src="{{ object.image.url }}" alt="{{ object.title }}">
+            </div>
+            <article class="d-flex flex-column ps-5">
+                <h2>{{ object.title }}</h2>
+                <span class="detail-a">Autor <a href="{% url 'author-books' book.author %}">{{ object.author }}</a></span>
+                <span class="mt-3">
+                    <strong>Nakladatel:</strong> {{ object.publisher }} <br>
+                    <strong>Kategorie:</strong> {{ object.genre }} <br>
+                    <strong>Datum vydání:</strong>
+                    {% if object.pub_date == None %}
+                        Neuvedeno <br>
+                    {% else %}
+                        {{ object.pub_date }} <br>
+                    {% endif %}
+                    <strong>Cena:</strong>
+                    {% if object.price == None %}
+                        Neuvedeno
+                    {% else %}
+                        {{ object.price }} Kč <br>
+                    {% endif %}
+                    <strong>Cena na internetu:</strong>
+                    {% if object.web_price == None %}
+                        Neuvedeno
+                    {% else %}
+                        {{ object.web_price }} Kč
+                    {% endif %}
+                </span>
+            </article>
+                <div class="media-body ms-auto d-flex align-items-end">
+                    <a class="btn btn-warning btn mt-1 mb-1 me-2" href="{% url 'book-update' object.id %}">Upravit</a>
+                    <button type="button" class="btn btn-danger btn mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                      Odstranit
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Odstranění knihy</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Opravdu si přejete odstranit {{ object.title }}
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ne</button>
+                              <form method="POST" action="{% url 'book-delete' object.id %}">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn btn-danger">Ano</button>
+                              </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+              </div>
+        </section>
+        {% if similar_book_list %}
+            <header class="container-header pt-5">
+                <h2>Jiná vydání</h2>
+            </header>
+            {% for book in similar_book_list %}
+                <section class="d-flex py-4 border-bottom">
+                    <div class="similar-book-detail-img">
+                        <img src="{{ book.image.url }}" alt="{{ book.title }}">
+                    </div>
+                    <article class="d-flex flex-column ps-5">
+                        <a class="similar-book-a" href="{% url 'book-detail' book.id %}"><h2>{{ object.title }}</h2></a>
+                        <span class="detail-a">Autor <a href="{% url 'author-books' book.author %}">{{ book.author }}</a></span>
+                        <span class="mt-3">
+                            <strong>Nakladatel:</strong> {{ book.publisher }} <br>
+                            <strong>Kategorie:</strong> {{ book.genre }} <br>
+                            <strong>Datum vydání:</strong>
+                            {% if book.pub_date == None %}
+                                Neuvedeno <br>
+                            {% else %}
+                                {{ book.pub_date }} <br>
+                            {% endif %}
+                            <strong>Cena:</strong>
+                            {% if book.price == None %}
+                                Neuvedeno
+                            {% else %}
+                                {{ book.price }} Kč <br>
+                            {% endif %}
+                            <strong>Cena na internetu:</strong>
+                            {% if book.web_price == None %}
+                                Neuvedeno
+                            {% else %}
+                                {{ book.web_price }} Kč
+                            {% endif %}
+                        </span>
+                    </article>
+                </section>
+            {% endfor %}
+        {% endif %}
+    </article>
+{% endblock %}

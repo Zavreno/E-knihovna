@@ -1,0 +1,123 @@
+{% extends "polls/base.html" %}
+{% block header %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid mx-5">
+            <a class="navbar-brand" href="{% url 'index' %}">E-Knihovna</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav">
+                    <a class="nav-link" href="{% url 'index' %}">Domů</a>
+                    <a class="nav-link active" href="{% url 'fast-book' %}">Seznam knih</a>
+                    <a class="nav-link {% if title == 'Přidat knihu' %}active{% endif %}" href="{% url 'new-book' %}">Přidat knihu</a>
+                </div>
+                <div class="navbar-nav ms-auto">
+                    <form class="d-flex" method="GET" action="{% url 'fast-book' %}">
+                        {% csrf_token %}
+                        <input class="form-control" type="text" name="q" placeholder="Zadejte název">
+                        <button class="btn btn-light my-2 my-sm-0 ms-2" type="submit">Vyhledat</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+{% block content %}
+    <section class="d-flex">
+        <article class="sidebar">
+            <ul class="nav flex-column">
+                <h4>Kategorie</h4>
+              {% for genre_value, genre_label in genre_choices %}
+                <li class="nav-item border-bottom">
+                    <a class="nav-link" href="{% url 'fast-book-category' genre_label %}">{{ genre_label }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+        </article>
+        <article class="containerr flex-fill">
+            <header class="container-header d-flex justify-content-between">
+                <h2>Seznam knih</h2>
+                <form id="select-form" method="GET" action="{% url 'fast-book' %}" class="d-flex align-items-center mb-2">
+                    {% csrf_token %}
+                        <label class="text-nowrap" for="sort-by">Seřadit dle:</label>
+                        <select id="sort-by" class="form-select ms-3" name="sort_by">
+                            <option value="up_date" {% if request.GET.sort_by == "up_date" %}selected{% endif %}>Datum přidání</option>
+                            <option value="title" {% if request.GET.sort_by == "title" %}selected{% endif %}>Jméno knihy</option>
+                            <option value="author" {% if request.GET.sort_by == "author" %}selected{% endif %}>Jméno autora</option>
+                            <option value="price" {% if request.GET.sort_by == "price" %}selected{% endif %}>Cena</option>
+                            <option value="pub_date" {% if request.GET.sort_by == "pub_date" %}selected{% endif %}>Datum vydání</option>
+                        </select>
+                </form>
+            </header>
+            <ul class="d-flex flex-column">
+                {% for book in book_list %}
+                    <li class="d-flex align-items-center border-bottom justify-content-between">
+                        <div>
+                            <a href="{% url 'book-detail' book.id %}" title="{{ book.title }}">{{ book.title }}</a>
+                            <div>
+                                <a class="author-a" href="{% url 'author-books' book.author %}"> {{ book.author }}</a>
+                                - {{ book.pub_date }}
+                            </div>
+                        </div>
+                        <div>
+                            <a class="btn btn-warning btn-sm mt-1 mb-1 me-1" href="{% url 'book-update' book.id %}">Upravit</a>
+                            <button type="button" class="btn btn-danger btn-sm mt-1 mb-1" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                              Odstranit
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Odstranění knihy</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                    Opravdu si přejete odstranit {{ book.title }}
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ne</button>
+                                      <form method="POST" action="{% url 'book-delete' book.id %}">
+                                          {% csrf_token %}
+                                          <button type="submit" class="btn btn-danger">Ano</button>
+                                      </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="d-flex justify-content-end border-top pt-3">
+                {% if is_paginated %}
+                    {% if page_obj.has_previous %}
+                        <a class="btn btn-outline-dark mb-3" href="?page={{ page_obj.previous_page_number }}">Předchozí</a>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <a class="btn btn-dark mb-3" href="?page={{ num }}">{{ num }}</a>
+                        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                            <a class="btn btn-outline-dark mb-3" href="?page={{ num }}">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a class="btn btn-outline-dark mb-3" href="?page={{ page_obj.next_page_number}}">Další</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </article>
+    </section>>
+
+    <script>
+        const sortBySelect = document.getElementById('sort-by');
+        sortBySelect.addEventListener('change', function() {
+            const form = document.getElementById('select-form');
+            form.submit();
+        });
+    </script>
+{% endblock %}
